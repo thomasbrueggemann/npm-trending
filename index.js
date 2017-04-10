@@ -3,6 +3,7 @@ var request = require("request");
 var MongoClient = require("mongodb").MongoClient;
 
 function storeRecentlyUpdated() {
+    console.log(new Date(), "storeRecentlyUpdated()");
     var packages = [];
 
     // fetch recently updated
