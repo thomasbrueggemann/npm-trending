@@ -1,0 +1,6 @@
+{
+	"apps" : [{
+		"name": "npm-trending",
+		"script": "./index.js"
+	}]
+}

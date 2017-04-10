@@ -1,0 +1,28 @@
+{
+  "name": "npm-trending",
+  "version": "1.0.0",
+  "description": "Capture trends in the NPM registry",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thomasbrueggemann/npm-trending.git"
+  },
+  "keywords": [
+    "npm",
+    "trending"
+  ],
+  "author": "Thomas Brüggemann",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/thomasbrueggemann/npm-trending/issues"
+  },
+  "homepage": "https://github.com/thomasbrueggemann/npm-trending#readme",
+  "dependencies": {
+    "cheerio": "^0.22.0",
+    "mongodb": "^2.2.25",
+    "request": "^2.81.0"
+  }
+}
