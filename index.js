@@ -1,7 +1,12 @@
-var cheerio = require("cheerio");
-var request = require("request");
-var MongoClient = require("mongodb").MongoClient;
+const cheerio = require("cheerio");
+const request = require("request");
+const MongoClient = require("mongodb").MongoClient;
+const moment = require("moment");
+const async = require("async");
 
+const mongodbUrl = "mongodb://localhost:27017/npm";
+
+// STORE RECENTLY UPDATED
 function storeRecentlyUpdated() {
     console.log(new Date(), "storeRecentlyUpdated()");
     var packages = [];
@@ -23,7 +28,7 @@ function storeRecentlyUpdated() {
 
         // store in mongodb
         // open mongodb connection
-        MongoClient.connect("mongodb://localhost:27017/npm", (err, db) => {
+        MongoClient.connect(mongodbUrl, (err, db) => {
             var collection = db.collection("packages");
 
             // insert each package
@@ -47,3 +52,84 @@ function storeRecentlyUpdated() {
 // download newly updated packages every minute
 setInterval(storeRecentlyUpdated, 60000);
 storeRecentlyUpdated();
+
+// CHECK NEXT PACKAGE
+function checkNextPackage(callback) {
+    MongoClient.connect(mongodbUrl, (err, db) => {
+        var downloadsCol = db.collection("downloads");
+        var packagesCol = db.collection("packages");
+
+        // find some packages
+        packagesCol
+            .find({})
+            .sort(["upt", 1])
+            .limit(1)
+            .toArray(function(err, packages) {
+                if (err) return callback(err);
+
+                var pkg = packages[0];
+
+                // download the npm download counts for today
+                request(
+                    "https://www.npmjs.com/package/" + pkg._id,
+                    (error, response, body) => {
+                        // the request has a valid response
+                        if (
+                            response &&
+                            response.statusCode === 200 &&
+                            response.body
+                        ) {
+                            // parse html with cheerio
+                            var $ = cheerio.load(response.body);
+
+                            var count = $(".daily-downloads")
+                                .text()
+                                .replace(/[^\d]/g, "");
+
+                            // store download count
+                            downloadsCol.updateOne(
+                                {
+                                    _id: {
+                                        pkg: pkg._id,
+                                        date: moment().startOf("day").toDate()
+                                    }
+                                },
+                                {
+                                    $set: {
+                                        dl: parseInt(count)
+                                    }
+                                },
+                                {
+                                    upsert: true
+                                }
+                            );
+
+                            // update the update date on the package
+                            packagesCol.updateOne(
+                                {
+                                    _id: pkg._id
+                                },
+                                {
+                                    $set: {
+                                        upt: new Date()
+                                    }
+                                }
+                            );
+
+                            console.log(
+                                new Date(),
+                                "checkNextPackage(" + pkg._id + ") -> ",
+                                parseInt(count)
+                            );
+
+                            return callback();
+                        }
+                    }
+                );
+            });
+    });
+}
+
+async.forever(checkNextPackage, err => {
+    console.error(err);
+});

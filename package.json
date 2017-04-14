@@ -21,8 +21,11 @@
   },
   "homepage": "https://github.com/thomasbrueggemann/npm-trending#readme",
   "dependencies": {
+    "async": "^2.3.0",
     "cheerio": "^0.22.0",
+    "moment": "^2.18.1",
     "mongodb": "^2.2.25",
+    "npm-download-count": "^1.0.2",
     "request": "^2.81.0"
   }
 }
