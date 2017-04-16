@@ -35,25 +35,13 @@ function storeRecentlyUpdated() {
             async.each(
                 packages,
                 (p, done) => {
-                    // download package config
-                    request(
-                        "https://unpkg.com/" + p + "/package.json",
-                        (error, response, body) => {
-                            var pkg = null;
-                            if (!error && response.statusCode === 200 && body) {
-                                pkg = JSON.parse(body);
-                            }
-
-                            collection.insert(
-                                {
-                                    _id: p,
-                                    upt: new Date(),
-                                    pkg: pkg
-                                },
-                                (err, result) => {
-                                    return done();
-                                }
-                            );
+                    collection.insert(
+                        {
+                            _id: p,
+                            upt: new Date()
+                        },
+                        (err, result) => {
+                            return done();
                         }
                     );
                 },
@@ -162,7 +150,7 @@ function downloadMissingPackageFiles(callback) {
         var collection = db.collection("packages");
 
         collection
-            .find({ pkg: { $exists: false } })
+            .find({ desc: { $exists: false } })
             .limit(10)
             .toArray((err, packages) => {
                 async.each(
@@ -172,24 +160,50 @@ function downloadMissingPackageFiles(callback) {
                         request(
                             "https://unpkg.com/" + p._id + "/package.json",
                             (error, response, body) => {
-                                console.log(err, response.statusCode);
-
                                 var pkg = null;
                                 if (!error && response.statusCode === 200) {
                                     pkg = JSON.parse(body);
                                 }
 
                                 if (pkg !== null) {
+                                    console.log({
+                                        desc: pkg.description,
+                                        ver: pkg.version,
+                                        keys: pkg.keywords
+                                    });
+
                                     collection.updateOne(
                                         {
                                             _id: p._id
                                         },
                                         {
                                             $set: {
-                                                pkg: pkg
+                                                desc: pkg.description,
+                                                ver: pkg.version,
+                                                keys: pkg.keywords
+                                            },
+                                            $unset: {
+                                                pkg: true
                                             }
                                         },
                                         (err, result) => {
+                                            // store dependencies
+                                            if ("dependencies" in pkg) {
+                                                for (var d in Object.keys(
+                                                    pkg.dependencies
+                                                )) {
+                                                    collection.insert(
+                                                        {
+                                                            _id: Object.keys(
+                                                                pkg.dependencies
+                                                            )[d],
+                                                            upt: new Date()
+                                                        },
+                                                        (err, result) => {}
+                                                    );
+                                                }
+                                            }
+
                                             return done();
                                         }
                                     );
