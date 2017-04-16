@@ -73,6 +73,8 @@ function checkNextPackage(callback) {
                 request(
                     "https://www.npmjs.com/package/" + pkg._id,
                     (error, response, body) => {
+                        console.log(error, response.statusCode);
+
                         // the request has a valid response
                         if (
                             response &&
@@ -121,9 +123,14 @@ function checkNextPackage(callback) {
                                 "checkNextPackage(" + pkg._id + ") -> ",
                                 parseInt(count)
                             );
-
-                            return callback();
+                        } else if (response.statusCode === 404) {
+                            // remove the package, because it apparently does not exist anymore
+                            packagesCol.deleteOne({
+                                _id: pkg._id
+                            });
                         }
+
+                        return callback();
                     }
                 );
             });
