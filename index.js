@@ -175,27 +175,25 @@ function downloadMissingPackageFiles(callback) {
                                 console.log(err, response.statusCode);
 
                                 var pkg = null;
-                                if (
-                                    !error &&
-                                    response.statusCode === 200 &&
-                                    body
-                                ) {
+                                if (!error && response.statusCode === 200) {
                                     pkg = JSON.parse(body);
                                 }
 
-                                collection.updateOne(
-                                    {
-                                        _id: p._id
-                                    },
-                                    {
-                                        $set: {
-                                            pkg: pkg
+                                if (pkg !== null) {
+                                    collection.updateOne(
+                                        {
+                                            _id: p._id
+                                        },
+                                        {
+                                            $set: {
+                                                pkg: pkg
+                                            }
+                                        },
+                                        (err, result) => {
+                                            return done();
                                         }
-                                    },
-                                    (err, result) => {
-                                        return done();
-                                    }
-                                );
+                                    );
+                                }
                             }
                         );
                     },
