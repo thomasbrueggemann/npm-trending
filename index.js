@@ -71,123 +71,134 @@ function checkNextPackage(callback) {
                 }
             })
             .sort(["upt", 1])
-            .limit(1)
+            .limit(5)
             .toArray(function(err, packages) {
                 if (err) return callback(err);
 
-                var pkg = packages[0];
+                async.each(
+                    packages,
+                    (pkg, ready) => {
+                        // download the npm download counts for today
+                        request(
+                            "https://www.npmjs.com/package/" + pkg._id,
+                            (error, response, body) => {
+                                // the request has a valid response
+                                if (
+                                    response &&
+                                    response.statusCode === 200 &&
+                                    response.body
+                                ) {
+                                    // parse html with cheerio
+                                    var $ = cheerio.load(response.body);
 
-                // download the npm download counts for today
-                request(
-                    "https://www.npmjs.com/package/" + pkg._id,
-                    (error, response, body) => {
-                        // the request has a valid response
-                        if (
-                            response &&
-                            response.statusCode === 200 &&
-                            response.body
-                        ) {
-                            // parse html with cheerio
-                            var $ = cheerio.load(response.body);
+                                    var count = $(".daily-downloads")
+                                        .text()
+                                        .replace(/[^\d]/g, "");
 
-                            var count = $(".daily-downloads")
-                                .text()
-                                .replace(/[^\d]/g, "");
-
-                            // store download count
-                            downloadsCol.updateOne(
-                                {
-                                    _id: {
-                                        pkg: pkg._id,
-                                        date: moment().startOf("day").toDate()
-                                    }
-                                },
-                                {
-                                    $set: {
-                                        dl: parseInt(count)
-                                    }
-                                },
-                                {
-                                    upsert: true
-                                }
-                            );
-
-                            // update the update date on the package
-                            packagesCol.updateOne(
-                                {
-                                    _id: pkg._id
-                                },
-                                {
-                                    $set: {
-                                        upt: new Date()
-                                    }
-                                }
-                            );
-
-                            // download package config
-                            request(
-                                "https://unpkg.com/" +
-                                    pkg._id +
-                                    "/package.json",
-                                (error, response, body) => {
-                                    var packagejson = null;
-                                    if (!error && response.statusCode === 200) {
-                                        packagejson = JSON.parse(body);
-                                    }
-
-                                    if (packagejson !== null) {
-                                        packagesCol.updateOne(
-                                            {
-                                                _id: pkg._id
-                                            },
-                                            {
-                                                $set: {
-                                                    desc: packagejson.description,
-                                                    ver: packagejson.version,
-                                                    keys: packagejson.keywords
-                                                },
-                                                $unset: {
-                                                    pkg: true
-                                                }
-                                            },
-                                            (err, result) => {
-                                                // store dependencies
-                                                if (
-                                                    "dependencies" in
-                                                    packagejson
-                                                ) {
-                                                    for (var d in Object.keys(
-                                                        packagejson.dependencies
-                                                    )) {
-                                                        packagesCol.insert(
-                                                            {
-                                                                _id: Object.keys(
-                                                                    packagejson.dependencies
-                                                                )[d],
-                                                                upt: new Date()
-                                                            },
-                                                            (err, result) => {}
-                                                        );
-                                                    }
-                                                }
+                                    // store download count
+                                    downloadsCol.updateOne(
+                                        {
+                                            _id: {
+                                                pkg: pkg._id,
+                                                date: moment()
+                                                    .startOf("day")
+                                                    .toDate()
                                             }
-                                        );
-                                    }
+                                        },
+                                        {
+                                            $set: {
+                                                dl: parseInt(count)
+                                            }
+                                        },
+                                        {
+                                            upsert: true
+                                        }
+                                    );
+
+                                    // update the update date on the package
+                                    packagesCol.updateOne(
+                                        {
+                                            _id: pkg._id
+                                        },
+                                        {
+                                            $set: {
+                                                upt: new Date()
+                                            }
+                                        }
+                                    );
+
+                                    // download package config
+                                    request(
+                                        "https://unpkg.com/" +
+                                            pkg._id +
+                                            "/package.json",
+                                        (error, response, body) => {
+                                            var packagejson = null;
+                                            if (
+                                                !error &&
+                                                response.statusCode === 200
+                                            ) {
+                                                packagejson = JSON.parse(body);
+                                            }
+
+                                            if (packagejson !== null) {
+                                                packagesCol.updateOne(
+                                                    {
+                                                        _id: pkg._id
+                                                    },
+                                                    {
+                                                        $set: {
+                                                            desc: packagejson.description,
+                                                            ver: packagejson.version,
+                                                            keys: packagejson.keywords
+                                                        },
+                                                        $unset: {
+                                                            pkg: true
+                                                        }
+                                                    },
+                                                    (err, result) => {
+                                                        // store dependencies
+                                                        if (
+                                                            "dependencies" in
+                                                            packagejson
+                                                        ) {
+                                                            for (var d in Object.keys(
+                                                                packagejson.dependencies
+                                                            )) {
+                                                                packagesCol.insert(
+                                                                    {
+                                                                        _id: Object.keys(
+                                                                            packagejson.dependencies
+                                                                        )[d],
+                                                                        upt: new Date()
+                                                                    },
+                                                                    (err, result) => {}
+                                                                );
+                                                            }
+                                                        }
+                                                    }
+                                                );
+                                            }
+                                        }
+                                    );
+
+                                    console.log(
+                                        new Date(),
+                                        "checkNextPackage(" + pkg._id + ") -> ",
+                                        parseInt(count)
+                                    );
+                                } else if (response.statusCode === 404) {
+                                    // remove the package, because it apparently does not exist anymore
+                                    packagesCol.deleteOne({
+                                        _id: pkg._id
+                                    });
                                 }
-                            );
 
-                            console.log(
-                                new Date(),
-                                "checkNextPackage(" + pkg._id + ") -> ",
-                                parseInt(count)
-                            );
-                        } else if (response.statusCode === 404) {
-                            // remove the package, because it apparently does not exist anymore
-                            packagesCol.deleteOne({
-                                _id: pkg._id
-                            });
-                        }
-
+                                return ready();
+                            }
+                        );
+                    },
+                    err => {
                         return callback();
                     }
                 );
