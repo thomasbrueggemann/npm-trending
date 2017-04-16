@@ -124,6 +124,58 @@ function checkNextPackage(callback) {
                                 }
                             );
 
+                            // download package config
+                            request(
+                                "https://unpkg.com/" +
+                                    pkg._id +
+                                    "/package.json",
+                                (error, response, body) => {
+                                    var packagejson = null;
+                                    if (!error && response.statusCode === 200) {
+                                        packagejson = JSON.parse(body);
+                                    }
+
+                                    if (packagejson !== null) {
+                                        collection.updateOne(
+                                            {
+                                                _id: pkg._id
+                                            },
+                                            {
+                                                $set: {
+                                                    desc: packagejson.description,
+                                                    ver: packagejson.version,
+                                                    keys: packagejson.keywords
+                                                },
+                                                $unset: {
+                                                    pkg: true
+                                                }
+                                            },
+                                            (err, result) => {
+                                                // store dependencies
+                                                if (
+                                                    "dependencies" in
+                                                    packagejson
+                                                ) {
+                                                    for (var d in Object.keys(
+                                                        packagejson.dependencies
+                                                    )) {
+                                                        collection.insert(
+                                                            {
+                                                                _id: Object.keys(
+                                                                    packagejson.dependencies
+                                                                )[d],
+                                                                upt: new Date()
+                                                            },
+                                                            (err, result) => {}
+                                                        );
+                                                    }
+                                                }
+                                            }
+                                        );
+                                    }
+                                }
+                            );
+
                             console.log(
                                 new Date(),
                                 "checkNextPackage(" + pkg._id + ") -> ",
@@ -143,79 +195,6 @@ function checkNextPackage(callback) {
     });
 }
 
-function downloadMissingPackageFiles(callback) {
-    MongoClient.connect(mongodbUrl, (err, db) => {
-        var collection = db.collection("packages");
-
-        collection
-            .find({ ver: { $exists: false } })
-            .limit(10)
-            .toArray((err, packages) => {
-                async.each(
-                    packages,
-                    (p, done) => {
-                        // download package config
-                        request(
-                            "https://unpkg.com/" + p._id + "/package.json",
-                            (error, response, body) => {
-                                var pkg = null;
-                                if (!error && response.statusCode === 200) {
-                                    pkg = JSON.parse(body);
-                                }
-
-                                if (pkg !== null) {
-                                    collection.updateOne(
-                                        {
-                                            _id: p._id
-                                        },
-                                        {
-                                            $set: {
-                                                desc: pkg.description,
-                                                ver: pkg.version,
-                                                keys: pkg.keywords
-                                            },
-                                            $unset: {
-                                                pkg: true
-                                            }
-                                        },
-                                        (err, result) => {
-                                            // store dependencies
-                                            if ("dependencies" in pkg) {
-                                                for (var d in Object.keys(
-                                                    pkg.dependencies
-                                                )) {
-                                                    collection.insert(
-                                                        {
-                                                            _id: Object.keys(
-                                                                pkg.dependencies
-                                                            )[d],
-                                                            upt: new Date()
-                                                        },
-                                                        (err, result) => {}
-                                                    );
-                                                }
-                                            }
-
-                                            return done();
-                                        }
-                                    );
-                                }
-                            }
-                        );
-                    },
-                    err => {
-                        db.close();
-                        return callback();
-                    }
-                );
-            });
-    });
-}
-
 async.forever(checkNextPackage, err => {
-    console.error(err);
-});
-
-async.forever(downloadMissingPackageFiles, err => {
     console.error(err);
 });
