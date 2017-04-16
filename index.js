@@ -136,7 +136,7 @@ function checkNextPackage(callback) {
                                     }
 
                                     if (packagejson !== null) {
-                                        collection.updateOne(
+                                        packagesCol.updateOne(
                                             {
                                                 _id: pkg._id
                                             },
@@ -159,7 +159,7 @@ function checkNextPackage(callback) {
                                                     for (var d in Object.keys(
                                                         packagejson.dependencies
                                                     )) {
-                                                        collection.insert(
+                                                        packagesCol.insert(
                                                             {
                                                                 _id: Object.keys(
                                                                     packagejson.dependencies
