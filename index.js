@@ -81,8 +81,6 @@ function checkNextPackage(callback) {
                 request(
                     "https://www.npmjs.com/package/" + pkg._id,
                     (error, response, body) => {
-                        console.log(error, response.statusCode);
-
                         // the request has a valid response
                         if (
                             response &&
@@ -166,12 +164,6 @@ function downloadMissingPackageFiles(callback) {
                                 }
 
                                 if (pkg !== null) {
-                                    console.log({
-                                        desc: pkg.description,
-                                        ver: pkg.version,
-                                        keys: pkg.keywords
-                                    });
-
                                     collection.updateOne(
                                         {
                                             _id: p._id
