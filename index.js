@@ -33,12 +33,24 @@ function storeRecentlyUpdated() {
 
             // insert each package
             packages.map(p => {
-                collection.insert(
-                    {
-                        _id: p,
-                        upt: new Date()
-                    },
-                    (err, reuslt) => {}
+                // download package config
+                request(
+                    "https://unpkg.com/" + p + "/package.json",
+                    (error, response, body) => {
+                        var pkg = null;
+                        if (!error && response.statusCode === 200 && body) {
+                            pkg = JSON.parse(body);
+                        }
+
+                        collection.insert(
+                            {
+                                _id: p,
+                                upt: new Date(),
+                                pkg: pkg
+                            },
+                            (err, result) => {}
+                        );
+                    }
                 );
 
                 return;
