@@ -148,7 +148,7 @@ function downloadMissingPackageFiles(callback) {
         var collection = db.collection("packages");
 
         collection
-            .find({ desc: { $exists: false } })
+            .find({ ver: { $exists: false } })
             .limit(10)
             .toArray((err, packages) => {
                 async.each(
