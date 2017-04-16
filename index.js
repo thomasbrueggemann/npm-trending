@@ -61,7 +61,11 @@ function checkNextPackage(callback) {
 
         // find some packages
         packagesCol
-            .find({})
+            .find({
+                upt: {
+                    $lt: moment().utc().subtract(1, "h").toDate()
+                }
+            })
             .sort(["upt", 1])
             .limit(1)
             .toArray(function(err, packages) {
