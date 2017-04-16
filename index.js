@@ -32,31 +32,35 @@ function storeRecentlyUpdated() {
             var collection = db.collection("packages");
 
             // insert each package
-            packages.map(p => {
-                // download package config
-                request(
-                    "https://unpkg.com/" + p + "/package.json",
-                    (error, response, body) => {
-                        var pkg = null;
-                        if (!error && response.statusCode === 200 && body) {
-                            pkg = JSON.parse(body);
+            async.each(
+                packages,
+                (p, done) => {
+                    // download package config
+                    request(
+                        "https://unpkg.com/" + p + "/package.json",
+                        (error, response, body) => {
+                            var pkg = null;
+                            if (!error && response.statusCode === 200 && body) {
+                                pkg = JSON.parse(body);
+                            }
+
+                            collection.insert(
+                                {
+                                    _id: p,
+                                    upt: new Date(),
+                                    pkg: pkg
+                                },
+                                (err, result) => {
+                                    return done();
+                                }
+                            );
                         }
-
-                        collection.insert(
-                            {
-                                _id: p,
-                                upt: new Date(),
-                                pkg: pkg
-                            },
-                            (err, result) => {}
-                        );
-                    }
-                );
-
-                return;
-            });
-
-            db.close();
+                    );
+                },
+                err => {
+                    db.close();
+                }
+            );
         });
     });
 }
