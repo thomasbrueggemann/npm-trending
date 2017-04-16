@@ -157,6 +157,61 @@ function checkNextPackage(callback) {
     });
 }
 
+function downloadMissingPackageFiles(callback) {
+    MongoClient.connect(mongodbUrl, (err, db) => {
+        var collection = db.collection("packages");
+
+        collection
+            .find({ pkg: { $exists: false } })
+            .limit(10)
+            .toArray((err, packages) => {
+                async.each(
+                    packages,
+                    (p, done) => {
+                        // download package config
+                        request(
+                            "https://unpkg.com/" + p._id + "/package.json",
+                            (error, response, body) => {
+                                console.log(err, response.statusCode);
+
+                                var pkg = null;
+                                if (
+                                    !error &&
+                                    response.statusCode === 200 &&
+                                    body
+                                ) {
+                                    pkg = JSON.parse(body);
+                                }
+
+                                collection.updateOne(
+                                    {
+                                        _id: p._id
+                                    },
+                                    {
+                                        $set: {
+                                            pkg: pkg
+                                        }
+                                    },
+                                    (err, result) => {
+                                        return done();
+                                    }
+                                );
+                            }
+                        );
+                    },
+                    err => {
+                        db.close();
+                        return callback();
+                    }
+                );
+            });
+    });
+}
+
 async.forever(checkNextPackage, err => {
+    console.error(err);
+});
+
+async.forever(downloadMissingPackageFiles, err => {
     console.error(err);
 });
