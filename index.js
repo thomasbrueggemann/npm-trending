@@ -186,7 +186,10 @@ MongoClient.connect(mongodbUrl, (err, db) => {
 										"checkNextPackage(" + pkg._id + ") -> ",
 										parseInt(count)
 									);
-								} else if (response.statusCode === 404) {
+								} else if (
+									response.statusCode === 404 ||
+									response.statusCode === 400
+								) {
 									// remove the package, because it apparently does not exist anymore
 									packagesCol.deleteOne({
 										_id: pkg._id
