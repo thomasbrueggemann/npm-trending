@@ -187,6 +187,7 @@ MongoClient.connect(mongodbUrl, (err, db) => {
 										parseInt(count)
 									);
 								} else if (
+									!response ||
 									response.statusCode === 404 ||
 									response.statusCode === 400
 								) {
