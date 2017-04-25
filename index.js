@@ -67,7 +67,7 @@ MongoClient.connect(mongodbUrl, (err, db) => {
 				}
 			})
 			.sort(["upt", 1])
-			.limit(5)
+			.limit(10)
 			.toArray(function(err, packages) {
 				if (err) return callback(err);
 
