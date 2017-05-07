@@ -186,6 +186,46 @@ MongoClient.connect(mongodbUrl, (err, db) => {
 										"checkNextPackage(" + pkg._id + ") -> ",
 										parseInt(count)
 									);
+
+									// calculate the "trend" of the last 3 days
+									downloadsCol.findOne(
+										{
+											_id: {
+												pkg: pkg._id,
+												date: {
+													$gte: moment()
+														.utc()
+														.subtract(3, "days")
+														.toDate()
+												}
+											}
+										},
+										{ sort: [["_id.date", 1]] },
+										(err, downloads_daysago) => {
+											if (!err && downloads_daysago) {
+												// download count a couple of days ago
+												var downloadDelta =
+													Math.abs(
+														parseInt(count) -
+															parseInt(
+																downloads_daysago.dl
+															)
+													) / parseInt(count);
+
+												// set the trend value
+												packagesCol.updateOne(
+													{
+														_id: pkg._id
+													},
+													{
+														$set: {
+															trnd_3: downloadDelta
+														}
+													}
+												);
+											}
+										}
+									);
 								} else if (
 									!response ||
 									response.statusCode === 404 ||
