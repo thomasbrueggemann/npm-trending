@@ -204,12 +204,11 @@ MongoClient.connect(mongodbUrl, (err, db) => {
 											if (!err && downloads_daysago) {
 												// download count a couple of days ago
 												var downloadDelta =
-													Math.abs(
-														parseInt(count) -
-															parseInt(
-																downloads_daysago.dl
-															)
-													) / parseInt(count);
+													(parseInt(count) -
+														parseInt(
+															downloads_daysago.dl
+														)) /
+													parseInt(count);
 
 												// set the trend value
 												packagesCol.updateOne(
