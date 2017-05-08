@@ -188,31 +188,15 @@ MongoClient.connect(mongodbUrl, (err, db) => {
 									);
 
 									// calculate the "trend" of the last 3 days
-									console.log(
-										JSON.stringify({
-											_id: {
-												pkg: pkg._id,
-												date: {
-													$gte: moment()
-														.utc()
-														.subtract(3, "days")
-														.startOf("day")
-														.toDate()
-												}
-											}
-										})
-									);
 									downloadsCol.findOne(
 										{
-											_id: {
-												pkg: pkg._id,
-												date: {
-													$gte: moment()
-														.utc()
-														.subtract(3, "days")
-														.startOf("day")
-														.toDate()
-												}
+											"_id.pkg": pkg._id,
+											"_id.date": {
+												$gte: moment()
+													.utc()
+													.subtract(3, "days")
+													.startOf("day")
+													.toDate()
 											}
 										},
 										{ sort: [["_id.date", 1]] },
