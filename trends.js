@@ -62,7 +62,7 @@ MongoClient.connect(mongodbUrl, (err, db) => {
 			}
 		)
 		.toArray((err, pkgs) => {
-			async.map(
+			async.each(
 				pkgs,
 				(p, done) => {
 					calcPackageTrend(p._id, done);
