@@ -2,5 +2,13 @@
 	"apps" : [{
 		"name": "npm-trending-crawler",
 		"script": "./crawler.js"
+	}, {
+		"name": "npm-trending-server",
+		"script": "./server.js",
+		"exec_interpreter": "./node_modules/.bin/babel-node",
+		"watch": true,
+		"env": {
+			"PORT": "8732"
+		}
 	}]
 }

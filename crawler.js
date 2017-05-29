@@ -9,6 +9,52 @@ MongoClient.connect(mongodbUrl, (err, db) => {
 	var downloadsCol = db.collection("downloads");
 	var packagesCol = db.collection("packages");
 
+	// CALC PACKAGE TREND
+	var calcPackageTrend = function(id, days, done) {
+		downloadsCol
+			.find(
+				{
+					"_id.pkg": id,
+					"_id.date": {
+						$lte: moment()
+							.utc()
+							.subtract(days, "days")
+							.startOf("day")
+							.toDate()
+					}
+				},
+				{ sort: [["_id.date", 1]] }
+			)
+			.toArray((err, downloads_daysago) => {
+				// download history available
+				var present = downloads_daysago[0].dl;
+				var past = downloads_daysago[downloads_daysago.length - 1].dl;
+
+				var growth =
+					Math.pow(present / past, 1 / downloads_daysago.length) - 1;
+
+				console.log(id, growth);
+
+				packagesCol.updateOne(
+					{
+						_id: id
+					},
+					{
+						$set: {
+							trend: parseFloat(growth)
+						},
+						$unset: {
+							trnd_3: true
+						}
+					},
+					{ upsert: true },
+					(err, results) => {
+						return done(err, results);
+					}
+				);
+			});
+	};
+
 	// STORE RECENTLY UPDATED
 	function storeRecentlyUpdated() {
 		console.log(new Date(), "storeRecentlyUpdated()");
@@ -188,46 +234,9 @@ MongoClient.connect(mongodbUrl, (err, db) => {
 									);
 
 									// calculate the "trend" of the last 3 days
-									/*downloadsCol.findOne(
-										{
-											"_id.pkg": pkg._id,
-											"_id.date": {
-												$gte: moment()
-													.utc()
-													.subtract(3, "days")
-													.startOf("day")
-													.toDate()
-											}
-										},
-										{ sort: [["_id.date", 1]] },
-										(err, downloads_daysago) => {
-											if (!err && downloads_daysago) {
-												// download count a couple of days ago
-												var downloadDelta =
-													(parseInt(count) -
-														parseInt(
-															downloads_daysago.dl
-														)) /
-													parseInt(count);
-
-												// set the trend value
-												packagesCol.updateOne(
-													{
-														_id: pkg._id
-													},
-													{
-														$set: {
-															trnd_3: downloadDelta
-														}
-													}
-												);
-											}
-
-											return ready();
-										}
-									);*/
-
-									return ready();
+									calcPackageTrend(pkg._id, 3, () => {
+										return ready();
+									});
 								} else if (
 									!response ||
 									response.statusCode === 404 ||
