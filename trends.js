@@ -65,7 +65,7 @@ var takeSomePackages = function(callback) {
 					_id: true
 				}
 			)
-			.limit(100)
+			.limit(25)
 			.toArray((err, pkgs) => {
 				async.each(
 					pkgs,
