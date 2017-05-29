@@ -63,6 +63,7 @@ MongoClient.connect(mongodbUrl, (err, db) => {
 				_id: true
 			}
 		)
+		.limit(100)
 		.toArray((err, pkgs) => {
 			async.each(
 				pkgs,
