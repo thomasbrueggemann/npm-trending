@@ -37,11 +37,13 @@ var calcPackageTrend = function(id, done) {
 				{
 					$set: {
 						trend: parseFloat(growth)
+					},
+					$unset: {
+						trnd_3: true
 					}
 				},
 				{ upsert: true },
 				(err, results) => {
-					console.log(err, results);
 					return done(err, results);
 				}
 			);
@@ -61,7 +63,6 @@ MongoClient.connect(mongodbUrl, (err, db) => {
 				_id: true
 			}
 		)
-		.limit(1)
 		.toArray((err, pkgs) => {
 			async.each(
 				pkgs,
