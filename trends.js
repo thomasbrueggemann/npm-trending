@@ -50,29 +50,37 @@ var calcPackageTrend = function(id, done) {
 		});
 };
 
-// open mongodb connection
-MongoClient.connect(mongodbUrl, (err, db) => {
-	// init collections
-	global.downloadsCol = db.collection("downloads");
-	global.packagesCol = db.collection("packages");
+// TAKE SOME PACKAGES
+var takeSomePackages = function(callback) {
+	// open mongodb connection
+	MongoClient.connect(mongodbUrl, (err, db) => {
+		// init collections
+		global.downloadsCol = db.collection("downloads");
+		global.packagesCol = db.collection("packages");
 
-	global.packagesCol
-		.find(
-			{},
-			{
-				_id: true
-			}
-		)
-		.limit(100)
-		.toArray((err, pkgs) => {
-			async.each(
-				pkgs,
-				(p, done) => {
-					calcPackageTrend(p._id, done);
-				},
-				() => {
-					console.log("Trends done!");
+		global.packagesCol
+			.find(
+				{},
+				{
+					_id: true
 				}
-			);
-		});
+			)
+			.limit(100)
+			.toArray((err, pkgs) => {
+				async.each(
+					pkgs,
+					(p, done) => {
+						calcPackageTrend(p._id, done);
+					},
+					() => {
+						console.log("Trends done!");
+						return callback();
+					}
+				);
+			});
+	});
+};
+
+async.forever(takeSomePackages, err => {
+	console.error(err);
 });
