@@ -40,7 +40,10 @@ var calcPackageTrend = function(id, done) {
 						trend: growth
 					}
 				},
-				done
+				(err, results) => {
+					console.log(err, results);
+					return done(err, results);
+				}
 			);
 		});
 };
