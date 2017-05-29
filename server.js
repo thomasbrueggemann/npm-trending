@@ -45,7 +45,8 @@ app.get("/trends/:id/days/:days", (req, res) => {
 					.utc()
 					.subtract(parseInt(req.params.days), "days")
 					.startOf("day")
-					.toDate()
+					.toDate(),
+				$lt: moment().utc().startOf("day").toDate()
 			}
 		})
 		.sort({ "_id.date": 1 })

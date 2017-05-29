@@ -188,7 +188,7 @@ MongoClient.connect(mongodbUrl, (err, db) => {
 									);
 
 									// calculate the "trend" of the last 3 days
-									downloadsCol.findOne(
+									/*downloadsCol.findOne(
 										{
 											"_id.pkg": pkg._id,
 											"_id.date": {
@@ -225,7 +225,9 @@ MongoClient.connect(mongodbUrl, (err, db) => {
 
 											return ready();
 										}
-									);
+									);*/
+
+									return ready();
 								} else if (
 									!response ||
 									response.statusCode === 404 ||

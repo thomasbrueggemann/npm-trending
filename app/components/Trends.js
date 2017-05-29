@@ -14,7 +14,7 @@ class Trends extends React.Component {
 	// COMPONENT DID MOUNT
 	componentDidMount() {
 		TrendsStore.listen(this.onChange);
-		TrendsActions.loadTrends();
+		TrendsActions.loadTrends(7);
 	}
 
 	// COMPONENT WILL UNMOUNT
@@ -32,7 +32,7 @@ class Trends extends React.Component {
 		if (!this.state.trends) return null;
 
 		return (
-			<div>
+			<div className="container">
 				{this.state.trends.map(t => {
 					return <TrendItem key={t._id} item={t} />;
 				})}

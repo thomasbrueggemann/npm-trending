@@ -265,31 +265,39 @@ var TrendItem = (function (_React$Component) {
 		value: function render() {
 			return _react2["default"].createElement(
 				"div",
-				null,
-				_react2["default"].createElement(_TrendGraph2["default"], { id: this.props.item._id }),
+				{ className: "columns" },
 				_react2["default"].createElement(
-					"h2",
-					null,
+					"div",
+					{ className: "column" },
+					_react2["default"].createElement(_TrendGraph2["default"], { id: this.props.item._id })
+				),
+				_react2["default"].createElement(
+					"div",
+					{ className: "column" },
 					_react2["default"].createElement(
-						"a",
-						{
-							href: "https://npmjs.com/" + this.props.item._id,
-							target: "_blank"
-						},
-						this.props.item._id
+						"h2",
+						null,
+						_react2["default"].createElement(
+							"a",
+							{
+								href: "https://npmjs.com/" + this.props.item._id,
+								target: "_blank"
+							},
+							this.props.item._id
+						)
+					),
+					_react2["default"].createElement(
+						"p",
+						null,
+						this.props.item.desc
+					),
+					_react2["default"].createElement(
+						"small",
+						null,
+						_react2["default"].createElement("i", { className: "fa fa-code-fork" }),
+						" ",
+						this.props.item.ver
 					)
-				),
-				_react2["default"].createElement(
-					"p",
-					null,
-					this.props.item.desc
-				),
-				_react2["default"].createElement(
-					"small",
-					null,
-					_react2["default"].createElement("i", { className: "fa fa-code-fork" }),
-					" ",
-					this.props.item.ver
 				)
 			);
 		}
@@ -353,7 +361,7 @@ var Trends = (function (_React$Component) {
 		key: "componentDidMount",
 		value: function componentDidMount() {
 			_storesTrendsStore2["default"].listen(this.onChange);
-			_actionsTrendsActions2["default"].loadTrends();
+			_actionsTrendsActions2["default"].loadTrends(7);
 		}
 
 		// COMPONENT WILL UNMOUNT
@@ -378,7 +386,7 @@ var Trends = (function (_React$Component) {
 
 			return _react2["default"].createElement(
 				"div",
-				null,
+				{ className: "container" },
 				this.state.trends.map(function (t) {
 					return _react2["default"].createElement(_TrendItem2["default"], { key: t._id, item: t });
 				})
