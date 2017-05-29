@@ -22,7 +22,6 @@ var calcPackageTrend = function(id, done) {
 		)
 		.toArray((err, downloads_daysago) => {
 			// download history available
-
 			var present = downloads_daysago[0].dl;
 			var past = downloads_daysago[downloads_daysago.length - 1].dl;
 
@@ -37,9 +36,10 @@ var calcPackageTrend = function(id, done) {
 				},
 				{
 					$set: {
-						trend: growth
+						trend: parseFloat(growth)
 					}
 				},
+				{ upsert: true },
 				(err, results) => {
 					console.log(err, results);
 					return done(err, results);
