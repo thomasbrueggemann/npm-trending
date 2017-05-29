@@ -5,8 +5,8 @@ const async = require("async");
 const mongodbUrl = "mongodb://localhost:27017/npm";
 
 // CALC PACKAGE TREND
-var calcPackageTrend = function(id) {
-	downloadsCol
+var calcPackageTrend = function(id, done) {
+	global.downloadsCol
 		.find(
 			{
 				"_id.pkg": id,
@@ -31,18 +31,16 @@ var calcPackageTrend = function(id) {
 
 			console.log(id, growth);
 
-			packagesCol.updateOne(
+			global.packagesCol.updateOne(
 				{
 					_id: id
 				},
 				{
 					$set: {
 						trend: growth
-					},
-					$unset: {
-						trnd_3: true
 					}
-				}
+				},
+				done
 			);
 		});
 };
@@ -53,7 +51,7 @@ MongoClient.connect(mongodbUrl, (err, db) => {
 	global.downloadsCol = db.collection("downloads");
 	global.packagesCol = db.collection("packages");
 
-	packagesCol
+	global.packagesCol
 		.find(
 			{},
 			{
@@ -61,8 +59,14 @@ MongoClient.connect(mongodbUrl, (err, db) => {
 			}
 		)
 		.toArray((err, pkgs) => {
-			pkgs.map(p => {
-				calcPackageTrend(p._id);
-			});
+			async.map(
+				pkgs,
+				(p, done) => {
+					calcPackageTrend(p._id, done);
+				},
+				() => {
+					console.log("Trends done!");
+				}
+			);
 		});
 });
