@@ -169,7 +169,7 @@ var TrendGraph = (function (_React$Component) {
 		key: "componentDidMount",
 		value: function componentDidMount() {
 			_storesTrendsStore2["default"].listen(this.onChange);
-			_actionsTrendsActions2["default"].loadHistory(this.props.id, 7);
+			_actionsTrendsActions2["default"].loadHistory(this.props.id, 31);
 		}
 
 		// COMPONENT WILL UNMOUNT
@@ -194,10 +194,6 @@ var TrendGraph = (function (_React$Component) {
 
 			return _react2["default"].createElement(_reactTrend2["default"], {
 				data: this.state.history[this.props.id],
-				smooth: true,
-				autoDraw: true,
-				autoDrawDuration: 750,
-				autoDrawEasing: "ease-out",
 				gradient: ["#c9de96", "#8ab66b", "#398235"],
 				radius: 5,
 				strokeWidth: 3,
@@ -499,7 +495,6 @@ var TrendsStore = (function () {
 	_createClass(TrendsStore, [{
 		key: "getTrendsSuccess",
 		value: function getTrendsSuccess(result) {
-			console.log(result);
 			this.trends = result.data;
 		}
 
@@ -514,7 +509,6 @@ var TrendsStore = (function () {
 	}, {
 		key: "getHistorySuccess",
 		value: function getHistorySuccess(result) {
-			console.log(result);
 			this.history[result.data._id] = result.data.values;
 		}
 

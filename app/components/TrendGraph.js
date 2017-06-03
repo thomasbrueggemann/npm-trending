@@ -14,7 +14,7 @@ class TrendGraph extends React.Component {
 	// COMPONENT DID MOUNT
 	componentDidMount() {
 		TrendsStore.listen(this.onChange);
-		TrendsActions.loadHistory(this.props.id, 7);
+		TrendsActions.loadHistory(this.props.id, 31);
 	}
 
 	// COMPONENT WILL UNMOUNT
@@ -34,10 +34,6 @@ class TrendGraph extends React.Component {
 		return (
 			<Trend
 				data={this.state.history[this.props.id]}
-				smooth
-				autoDraw
-				autoDrawDuration={750}
-				autoDrawEasing="ease-out"
 				gradient={["#c9de96", "#8ab66b", "#398235"]}
 				radius={5}
 				strokeWidth={3}

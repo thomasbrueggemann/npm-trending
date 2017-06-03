@@ -28,7 +28,7 @@ app.use(express.static(path.join(__dirname, "public")));
 // TRENDS
 app.get("/trends", (req, res) => {
 	// find trending packages
-	packagesCol.find({}).sort({ trnd_3: -1 }).limit(25).toArray((err, pkgs) => {
+	packagesCol.find({}).sort({ trend: -1 }).limit(25).toArray((err, pkgs) => {
 		return res.send(pkgs);
 	});
 });

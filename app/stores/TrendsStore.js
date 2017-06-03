@@ -10,7 +10,6 @@ class TrendsStore {
 
 	// GET TRENDS SUCCESS
 	getTrendsSuccess(result) {
-		console.log(result);
 		this.trends = result.data;
 	}
 
@@ -21,7 +20,6 @@ class TrendsStore {
 
 	// GET HISTORY SUCCESS
 	getHistorySuccess(result) {
-		console.log(result);
 		this.history[result.data._id] = result.data.values;
 	}
 

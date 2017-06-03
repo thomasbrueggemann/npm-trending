@@ -26,6 +26,10 @@ MongoClient.connect(mongodbUrl, (err, db) => {
 				{ sort: [["_id.date", 1]] }
 			)
 			.toArray((err, downloads_daysago) => {
+				if (err || !downloads_daysago || downloads_daysago.length < 2) {
+					return done(err, null);
+				}
+
 				// download history available
 				var present = downloads_daysago[0].dl;
 				var past = downloads_daysago[downloads_daysago.length - 1].dl;
@@ -190,9 +194,12 @@ MongoClient.connect(mongodbUrl, (err, db) => {
 													},
 													{
 														$set: {
-															desc: packagejson.description,
-															ver: packagejson.version,
-															keys: packagejson.keywords
+															desc:
+																packagejson.description,
+															ver:
+																packagejson.version,
+															keys:
+																packagejson.keywords
 														},
 														$unset: {
 															pkg: true
