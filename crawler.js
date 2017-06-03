@@ -147,6 +147,7 @@ MongoClient.connect(mongodbUrl, (err, db) => {
 											_id: {
 												pkg: pkg._id,
 												date: moment()
+													.utc()
 													.startOf("day")
 													.toDate()
 											}
