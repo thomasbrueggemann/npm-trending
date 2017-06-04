@@ -185,7 +185,11 @@ MongoClient.connect(mongodbUrl, (err, db) => {
 												!error &&
 												response.statusCode === 200
 											) {
-												packagejson = JSON.parse(body);
+												try {
+													packagejson = JSON.parse(
+														body
+													);
+												} catch (e) {}
 											}
 
 											if (packagejson !== null) {
