@@ -138,77 +138,113 @@ var _react = require("react");
 
 var _react2 = _interopRequireDefault(_react);
 
-var _reactTrend = require("react-trend");
+var _TrendItemGraph = require("./TrendItemGraph");
 
-var _reactTrend2 = _interopRequireDefault(_reactTrend);
+var _TrendItemGraph2 = _interopRequireDefault(_TrendItemGraph);
 
-var _actionsTrendsActions = require("../actions/TrendsActions");
-
-var _actionsTrendsActions2 = _interopRequireDefault(_actionsTrendsActions);
-
-var _storesTrendsStore = require("../stores/TrendsStore");
-
-var _storesTrendsStore2 = _interopRequireDefault(_storesTrendsStore);
-
-var TrendGraph = (function (_React$Component) {
-	_inherits(TrendGraph, _React$Component);
+var TrendItem = (function (_React$Component) {
+	_inherits(TrendItem, _React$Component);
 
 	// CONSTRUCTOR
 
-	function TrendGraph(props) {
-		_classCallCheck(this, TrendGraph);
+	function TrendItem(props) {
+		_classCallCheck(this, TrendItem);
 
-		_get(Object.getPrototypeOf(TrendGraph.prototype), "constructor", this).call(this, props);
-		this.state = _storesTrendsStore2["default"].getState();
-		this.onChange = this.onChange.bind(this);
+		_get(Object.getPrototypeOf(TrendItem.prototype), "constructor", this).call(this, props);
+
+		this.state = {
+			downloads: 0
+		};
 	}
 
 	// COMPONENT DID MOUNT
 
-	_createClass(TrendGraph, [{
+	_createClass(TrendItem, [{
 		key: "componentDidMount",
-		value: function componentDidMount() {
-			_storesTrendsStore2["default"].listen(this.onChange);
-			_actionsTrendsActions2["default"].loadHistory(this.props.id, 31);
-		}
+		value: function componentDidMount() {}
 
 		// COMPONENT WILL UNMOUNT
 	}, {
 		key: "componentWillUnmount",
-		value: function componentWillUnmount() {
-			_storesTrendsStore2["default"].unlisten(this.onChange);
-		}
+		value: function componentWillUnmount() {}
 
-		// ON CHANGE
+		// SET DOWNLOADS
 	}, {
-		key: "onChange",
-		value: function onChange(state) {
-			this.setState(state);
+		key: "setDownloads",
+		value: function setDownloads(d) {
+			this.setState({
+				downloads: parseInt(d)
+			});
 		}
 
 		// RENDER
 	}, {
 		key: "render",
 		value: function render() {
-			if (!this.state.history[this.props.id]) return null;
-
-			return _react2["default"].createElement(_reactTrend2["default"], {
-				data: this.state.history[this.props.id],
-				gradient: ["#c9de96", "#8ab66b", "#398235"],
-				radius: 5,
-				strokeWidth: 3,
-				strokeLinecap: "round"
-			});
+			return _react2["default"].createElement(
+				"div",
+				{ className: "row trend-row" },
+				_react2["default"].createElement("div", { className: "col-md-2" }),
+				_react2["default"].createElement(
+					"div",
+					{ className: "col-md-8" },
+					_react2["default"].createElement(
+						"div",
+						{ className: "row inner-trend-row" },
+						_react2["default"].createElement(
+							"div",
+							{ className: "col-md-4" },
+							_react2["default"].createElement(_TrendItemGraph2["default"], {
+								id: this.props.item._id,
+								setDownloads: this.setDownloads.bind(this)
+							})
+						),
+						_react2["default"].createElement(
+							"div",
+							{ className: "col-md-8" },
+							_react2["default"].createElement(
+								"h2",
+								null,
+								_react2["default"].createElement(
+									"a",
+									{
+										href: "https://npmjs.com/" + this.props.item._id,
+										target: "_blank"
+									},
+									this.props.item._id
+								)
+							),
+							_react2["default"].createElement(
+								"p",
+								null,
+								this.props.item.desc
+							),
+							_react2["default"].createElement(
+								"small",
+								null,
+								_react2["default"].createElement("i", { className: "fa fa-code-fork" }),
+								" ",
+								this.props.item.ver,
+								_react2["default"].createElement("span", { className: "distancer" }),
+								_react2["default"].createElement("i", { className: "fa fa-download" }),
+								" ",
+								this.state.downloads
+							)
+						)
+					)
+				),
+				_react2["default"].createElement("div", { className: "col-md-2" })
+			);
 		}
 	}]);
 
-	return TrendGraph;
+	return TrendItem;
 })(_react2["default"].Component);
 
-exports["default"] = TrendGraph;
+exports["default"] = TrendItem;
 module.exports = exports["default"];
 
-},{"../actions/TrendsActions":1,"../stores/TrendsStore":9,"react":"react","react-trend":63}],5:[function(require,module,exports){
+},{"./TrendItemGraph":5,"react":"react"}],5:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -229,83 +265,86 @@ var _react = require("react");
 
 var _react2 = _interopRequireDefault(_react);
 
-var _TrendGraph = require("./TrendGraph");
+var _reactTrend = require("react-trend");
 
-var _TrendGraph2 = _interopRequireDefault(_TrendGraph);
+var _reactTrend2 = _interopRequireDefault(_reactTrend);
 
-var TrendItem = (function (_React$Component) {
-	_inherits(TrendItem, _React$Component);
+var _actionsTrendsActions = require("../actions/TrendsActions");
+
+var _actionsTrendsActions2 = _interopRequireDefault(_actionsTrendsActions);
+
+var _storesTrendsStore = require("../stores/TrendsStore");
+
+var _storesTrendsStore2 = _interopRequireDefault(_storesTrendsStore);
+
+var TrendItemGraph = (function (_React$Component) {
+	_inherits(TrendItemGraph, _React$Component);
 
 	// CONSTRUCTOR
 
-	function TrendItem(props) {
-		_classCallCheck(this, TrendItem);
+	function TrendItemGraph(props) {
+		_classCallCheck(this, TrendItemGraph);
 
-		_get(Object.getPrototypeOf(TrendItem.prototype), "constructor", this).call(this, props);
+		_get(Object.getPrototypeOf(TrendItemGraph.prototype), "constructor", this).call(this, props);
+		this.state = _storesTrendsStore2["default"].getState();
+		this.onChange = this.onChange.bind(this);
 	}
 
 	// COMPONENT DID MOUNT
 
-	_createClass(TrendItem, [{
+	_createClass(TrendItemGraph, [{
 		key: "componentDidMount",
-		value: function componentDidMount() {}
+		value: function componentDidMount() {
+			_storesTrendsStore2["default"].listen(this.onChange);
+			_actionsTrendsActions2["default"].loadHistory(this.props.id, 31);
+		}
 
 		// COMPONENT WILL UNMOUNT
 	}, {
 		key: "componentWillUnmount",
-		value: function componentWillUnmount() {}
+		value: function componentWillUnmount() {
+			_storesTrendsStore2["default"].unlisten(this.onChange);
+		}
+
+		// ON CHANGE
+	}, {
+		key: "onChange",
+		value: function onChange(state) {
+			this.setState(state);
+
+			// bubble up the download count
+			var dataSeries = this.state.history[this.props.id];
+			if (dataSeries) {
+				var dl = dataSeries[dataSeries.length - 1];
+				if (dl) {
+					this.props.setDownloads(dl);
+				}
+			}
+		}
 
 		// RENDER
 	}, {
 		key: "render",
 		value: function render() {
-			return _react2["default"].createElement(
-				"div",
-				{ className: "columns" },
-				_react2["default"].createElement(
-					"div",
-					{ className: "column" },
-					_react2["default"].createElement(_TrendGraph2["default"], { id: this.props.item._id })
-				),
-				_react2["default"].createElement(
-					"div",
-					{ className: "column" },
-					_react2["default"].createElement(
-						"h2",
-						null,
-						_react2["default"].createElement(
-							"a",
-							{
-								href: "https://npmjs.com/" + this.props.item._id,
-								target: "_blank"
-							},
-							this.props.item._id
-						)
-					),
-					_react2["default"].createElement(
-						"p",
-						null,
-						this.props.item.desc
-					),
-					_react2["default"].createElement(
-						"small",
-						null,
-						_react2["default"].createElement("i", { className: "fa fa-code-fork" }),
-						" ",
-						this.props.item.ver
-					)
-				)
-			);
+			if (!this.state.history[this.props.id]) return null;
+
+			return _react2["default"].createElement(_reactTrend2["default"], {
+				data: this.state.history[this.props.id],
+				gradient: ["#c9de96", "#8ab66b", "#398235"],
+				radius: 5,
+				strokeWidth: 3,
+				strokeLinecap: "round"
+			});
 		}
 	}]);
 
-	return TrendItem;
+	return TrendItemGraph;
 })(_react2["default"].Component);
 
-exports["default"] = TrendItem;
+exports["default"] = TrendItemGraph;
 module.exports = exports["default"];
 
-},{"./TrendGraph":4,"react":"react"}],6:[function(require,module,exports){
+},{"../actions/TrendsActions":1,"../stores/TrendsStore":9,"react":"react","react-trend":63}],6:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -383,6 +422,17 @@ var Trends = (function (_React$Component) {
 			return _react2["default"].createElement(
 				"div",
 				{ className: "container" },
+				_react2["default"].createElement(
+					"div",
+					{ className: "row" },
+					_react2["default"].createElement("div", { className: "col-md-2" }),
+					_react2["default"].createElement(
+						"div",
+						{ className: "col-md-8" },
+						_react2["default"].createElement("img", { src: "/img/logo.png", width: "100%" })
+					),
+					_react2["default"].createElement("div", { className: "col-md-2" })
+				),
 				this.state.trends.map(function (t) {
 					return _react2["default"].createElement(_TrendItem2["default"], { key: t._id, item: t });
 				})
@@ -396,7 +446,7 @@ var Trends = (function (_React$Component) {
 exports["default"] = Trends;
 module.exports = exports["default"];
 
-},{"../actions/TrendsActions":1,"../stores/TrendsStore":9,"./TrendItem":5,"react":"react"}],7:[function(require,module,exports){
+},{"../actions/TrendsActions":1,"../stores/TrendsStore":9,"./TrendItem":4,"react":"react"}],7:[function(require,module,exports){
 "use strict";
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }

@@ -33,6 +33,15 @@ class Trends extends React.Component {
 
 		return (
 			<div className="container">
+
+				<div className="row">
+					<div className="col-md-2" />
+					<div className="col-md-8">
+						<img src="/img/logo.png" width="100%" />
+					</div>
+					<div className="col-md-2" />
+				</div>
+
 				{this.state.trends.map(t => {
 					return <TrendItem key={t._id} item={t} />;
 				})}

@@ -3,7 +3,7 @@ import Trend from "react-trend";
 import TrendsActions from "../actions/TrendsActions";
 import TrendsStore from "../stores/TrendsStore";
 
-class TrendGraph extends React.Component {
+class TrendItemGraph extends React.Component {
 	// CONSTRUCTOR
 	constructor(props) {
 		super(props);
@@ -25,6 +25,15 @@ class TrendGraph extends React.Component {
 	// ON CHANGE
 	onChange(state) {
 		this.setState(state);
+
+		// bubble up the download count
+		var dataSeries = this.state.history[this.props.id];
+		if (dataSeries) {
+			var dl = dataSeries[dataSeries.length - 1];
+			if (dl) {
+				this.props.setDownloads(dl);
+			}
+		}
 	}
 
 	// RENDER
@@ -43,4 +52,4 @@ class TrendGraph extends React.Component {
 	}
 }
 
-export default TrendGraph;
+export default TrendItemGraph;
