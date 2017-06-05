@@ -424,7 +424,7 @@ var Trends = (function (_React$Component) {
 				{ className: "container" },
 				_react2["default"].createElement(
 					"div",
-					{ className: "row" },
+					{ className: "row logo-row" },
 					_react2["default"].createElement("div", { className: "col-md-2" }),
 					_react2["default"].createElement(
 						"div",

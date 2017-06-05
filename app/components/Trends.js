@@ -34,7 +34,7 @@ class Trends extends React.Component {
 		return (
 			<div className="container">
 
-				<div className="row">
+				<div className="row logo-row">
 					<div className="col-md-2" />
 					<div className="col-md-8">
 						<img src="/img/logo.png" width="100%" />
