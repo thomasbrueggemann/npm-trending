@@ -11,6 +11,7 @@ const RoutingContext = Router.RoutingContext;
 const routes = require("./app/routes");
 const mongodb = require("mongodb");
 const moment = require("moment");
+const apicache = require("apicache");
 
 app.set("port", process.env.PORT || 3000);
 app.use(
@@ -24,6 +25,7 @@ app.use(
 	})
 );
 app.use(express.static(path.join(__dirname, "public")));
+var cache = apicache.middleware;
 
 // TRENDS
 app.get("/trends", (req, res) => {
@@ -34,7 +36,7 @@ app.get("/trends", (req, res) => {
 });
 
 // TRENDS / :ID / DAYS / :DAYS
-app.get("/trends/:id/days/:days", (req, res) => {
+app.get("/trends/:id/days/:days", cache("5 minutes"), (req, res) => {
 	var id = decodeURIComponent(req.params.id);
 
 	downloadsCol
