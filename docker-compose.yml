@@ -1,0 +1,26 @@
+version: "2"
+services:
+
+    # website
+    website:
+        image: npm-trending-web:latest
+        container_name: npm-trending-website
+        network_mode: bridge
+        restart: always
+        expose:
+            - "8732"
+        links:
+            - mongo
+        environment:
+            - VIRTUAL_HOST=npm-trending.com,www.npm-trending.com
+            - HTTPS_METHOD=redirect
+
+    # MONGODB
+    mongo:
+       image: mongo
+       container_name: "npm-trending-mongodb"
+       network_mode: bridge
+       ports:
+           - "28018:27017"
+       volumes:
+           - "./data:/data/db"

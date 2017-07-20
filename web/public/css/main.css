@@ -1,0 +1,22 @@
+.trend-row {
+	margin: 40px 0 40px 0;
+}
+
+.inner-trend-row {
+	border-bottom:1px solid #e1e4e8;
+	padding-bottom:40px;
+}
+
+h2 {
+	margin-top:0px;
+}
+
+.distancer {
+	height:1px;
+	margin-right:10px;
+}
+
+.logo-row {
+	margin-top:20px;
+	margin-bottom:10px;
+}
