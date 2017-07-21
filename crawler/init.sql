@@ -2,7 +2,7 @@ CREATE TABLE IF NOT EXISTS `packages` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(128) NOT NULL DEFAULT '',
   `description` text,
-  `version` varchar(8) DEFAULT NULL,
+  `version` varchar(50) DEFAULT NULL,
   `keywords` text,
   `lastUpdate` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -16,6 +16,6 @@ CREATE TABLE IF NOT EXISTS `downloads` (
   `downloads` int(11) NOT NULL,
   `day` date NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `package` (`package`),
+  UNIQUE KEY `DownloadsPerDay` (`package`,`day`),
   CONSTRAINT `package` FOREIGN KEY (`package`) REFERENCES `packages` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=49 DEFAULT CHARSET=utf8;
