@@ -1,6 +1,6 @@
 FROM ubuntu:16.04
 MAINTAINER Thomas Brüggemann <mail@thomasbrueggemann.com>
-LABEL Description="npm-trending.com Crawler" Vendor="Thomas Brüggemann" Version="1.0.0"
+LABEL Description="npm-trending.com Crawler" Vendor="Thomas Brüggemann" Version="1.0.1"
 
 # INSTALL DEPENDENCIES
 RUN apt-get update -y && apt-get install -y curl
