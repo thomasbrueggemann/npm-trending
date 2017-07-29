@@ -14,7 +14,7 @@ class TrendItemGraph extends React.Component {
 	// COMPONENT DID MOUNT
 	componentDidMount() {
 		TrendsStore.listen(this.onChange);
-		TrendsActions.loadHistory(this.props.id, 31);
+		TrendsActions.loadHistory(this.props.id, 7);
 	}
 
 	// COMPONENT WILL UNMOUNT

@@ -11,12 +11,6 @@ class TrendItem extends React.Component {
 		};
 	}
 
-	// COMPONENT DID MOUNT
-	componentDidMount() {}
-
-	// COMPONENT WILL UNMOUNT
-	componentWillUnmount() {}
-
 	// SET DOWNLOADS
 	setDownloads(d) {
 		this.setState({
@@ -30,33 +24,39 @@ class TrendItem extends React.Component {
 			<div className="row trend-row">
 				<div className="col-md-2" />
 				<div className="col-md-8">
-
 					<div className="row inner-trend-row">
 						<div className="col-md-4">
 							<TrendItemGraph
-								id={this.props.item._id}
+								id={this.props.item.id}
 								setDownloads={this.setDownloads.bind(this)}
 							/>
 						</div>
-						<div className="col-md-8">
+						<div className="col-md-1">
+							<span className="counter">
+								#{this.props.idx + 1}
+							</span>
+						</div>
+						<div className="col-md-7">
 							<h2>
 								<a
 									href={
 										"https://npmjs.com/" +
-										this.props.item._id
+										this.props.item.name
 									}
 									target="_blank"
 								>
-									{this.props.item._id}
+									{this.props.item.name}
 								</a>
 							</h2>
-							<p>{this.props.item.desc}</p>
+							<p>
+								{this.props.item.description}
+							</p>
 							<small>
-								<i className="fa fa-code-fork" />
-								{" "}{this.props.item.ver}
+								<i className="fa fa-code-fork" />{" "}
+								{this.props.item.version}
 								<span className="distancer" />
-								<i className="fa fa-download" />
-								{" "}{this.state.downloads}
+								<i className="fa fa-download" />{" "}
+								{this.state.downloads}
 							</small>
 						</div>
 					</div>

@@ -3,20 +3,30 @@
 }
 
 .inner-trend-row {
-	border-bottom:1px solid #e1e4e8;
-	padding-bottom:40px;
+	border-bottom: 1px solid #e1e4e8;
+	padding-bottom: 40px;
 }
 
 h2 {
-	margin-top:0px;
+	margin-top: 0px;
 }
 
 .distancer {
-	height:1px;
-	margin-right:10px;
+	height: 1px;
+	margin-right: 10px;
 }
 
 .logo-row {
-	margin-top:20px;
-	margin-bottom:10px;
+	margin-top: 20px;
+	margin-bottom: 10px;
+}
+
+a {
+	color: black !important;
+}
+
+.counter {
+	font-size: 2em;
+	color: grey;
+	font-weight: lighter;
 }

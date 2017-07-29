@@ -9,10 +9,26 @@ const ReactDOM = require("react-dom/server");
 const Router = require("react-router");
 const RoutingContext = Router.RoutingContext;
 const routes = require("./app/routes");
-const mongodb = require("mongodb");
 const moment = require("moment");
-const apicache = require("apicache");
+const cache = require("apicache").middleware;
+const mysql = require("mysql");
+const fs = require("fs");
 
+// open mysql connection pool
+var pool = mysql.createPool({
+	host: "mysql",
+	user: "root",
+	port: 3306,
+	password: "npm2017",
+	database: "npm-trending",
+	connectionLimit: 100
+});
+
+// read queries
+var trendingQuery = fs.readFileSync("./queries/trending.sql", "utf8");
+var historyQuery = fs.readFileSync("./queries/history.sql", "utf8");
+
+// config express
 app.set("port", process.env.PORT || 3000);
 app.use(
 	bodyParser.json({
@@ -25,41 +41,37 @@ app.use(
 	})
 );
 app.use(express.static(path.join(__dirname, "public")));
-var cache = apicache.middleware;
 
 // TRENDS
-app.get("/trends", (req, res) => {
-	// find trending packages
-	packagesCol.find({}).sort({ trend: -1 }).limit(25).toArray((err, pkgs) => {
-		return res.send(pkgs);
+app.get("/trends", cache("5 minutes"), (req, res) => {
+	// get mysql connection
+	pool.getConnection((err, conn) => {
+		// query for trends
+		conn.query(trendingQuery, (error, results, fields) => {
+			return res.send(results);
+		});
 	});
 });
 
 // TRENDS / :ID / DAYS / :DAYS
-app.get("/trends/:id/days/:days", cache("5 minutes"), (req, res) => {
-	var id = decodeURIComponent(req.params.id);
-
-	downloadsCol
-		.find({
-			"_id.pkg": id,
-			"_id.date": {
-				$gte: moment()
-					.utc()
-					.subtract(parseInt(req.params.days), "days")
-					.startOf("day")
-					.toDate(),
-				$lt: moment().utc().startOf("day").toDate()
+app.get("/trends/:id/days/:days", cache("1 hour"), (req, res) => {
+	// get mysql connection
+	pool.getConnection((err, conn) => {
+		// query for history of a package
+		conn.query(
+			historyQuery,
+			[parseInt(req.params.id), parseInt(req.params.days) * -1],
+			(error, results, fields) => {
+				// return the package id and download values
+				return res.send({
+					id: req.params.id,
+					values: results.map(d => {
+						return d.downloads;
+					})
+				});
 			}
-		})
-		.sort({ "_id.date": 1 })
-		.toArray((err, downloads) => {
-			return res.send({
-				_id: id,
-				values: downloads.map(d => {
-					return d.dl;
-				})
-			});
-		});
+		);
+	});
 });
 
 // REACT.JS
@@ -92,15 +104,7 @@ app.use((req, res) => {
 	);
 });
 
-// mongodb connect
-mongodb.connect("mongodb://mongo:28018/npm", (err, db) => {
-	if (err) throw err;
-
-	global.downloadsCol = db.collection("downloads");
-	global.packagesCol = db.collection("packages");
-
-	// EXPRESS.JS
-	server.listen(app.get("port"), () => {
-		console.log("NPM Trending server listening on port " + app.get("port"));
-	});
+// EXPRESS.JS
+server.listen(app.get("port"), () => {
+	console.log("NPM Trending server listening on port " + app.get("port"));
 });

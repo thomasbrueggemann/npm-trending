@@ -157,19 +157,9 @@ var TrendItem = (function (_React$Component) {
 		};
 	}
 
-	// COMPONENT DID MOUNT
+	// SET DOWNLOADS
 
 	_createClass(TrendItem, [{
-		key: "componentDidMount",
-		value: function componentDidMount() {}
-
-		// COMPONENT WILL UNMOUNT
-	}, {
-		key: "componentWillUnmount",
-		value: function componentWillUnmount() {}
-
-		// SET DOWNLOADS
-	}, {
 		key: "setDownloads",
 		value: function setDownloads(d) {
 			this.setState({
@@ -195,36 +185,46 @@ var TrendItem = (function (_React$Component) {
 							"div",
 							{ className: "col-md-4" },
 							_react2["default"].createElement(_TrendItemGraph2["default"], {
-								id: this.props.item._id,
+								id: this.props.item.id,
 								setDownloads: this.setDownloads.bind(this)
 							})
 						),
 						_react2["default"].createElement(
 							"div",
-							{ className: "col-md-8" },
+							{ className: "col-md-1" },
+							_react2["default"].createElement(
+								"span",
+								{ className: "counter" },
+								"#",
+								this.props.idx + 1
+							)
+						),
+						_react2["default"].createElement(
+							"div",
+							{ className: "col-md-7" },
 							_react2["default"].createElement(
 								"h2",
 								null,
 								_react2["default"].createElement(
 									"a",
 									{
-										href: "https://npmjs.com/" + this.props.item._id,
+										href: "https://npmjs.com/" + this.props.item.name,
 										target: "_blank"
 									},
-									this.props.item._id
+									this.props.item.name
 								)
 							),
 							_react2["default"].createElement(
 								"p",
 								null,
-								this.props.item.desc
+								this.props.item.description
 							),
 							_react2["default"].createElement(
 								"small",
 								null,
 								_react2["default"].createElement("i", { className: "fa fa-code-fork" }),
 								" ",
-								this.props.item.ver,
+								this.props.item.version,
 								_react2["default"].createElement("span", { className: "distancer" }),
 								_react2["default"].createElement("i", { className: "fa fa-download" }),
 								" ",
@@ -296,7 +296,7 @@ var TrendItemGraph = (function (_React$Component) {
 		key: "componentDidMount",
 		value: function componentDidMount() {
 			_storesTrendsStore2["default"].listen(this.onChange);
-			_actionsTrendsActions2["default"].loadHistory(this.props.id, 31);
+			_actionsTrendsActions2["default"].loadHistory(this.props.id, 7);
 		}
 
 		// COMPONENT WILL UNMOUNT
@@ -433,8 +433,8 @@ var Trends = (function (_React$Component) {
 					),
 					_react2["default"].createElement("div", { className: "col-md-2" })
 				),
-				this.state.trends.map(function (t) {
-					return _react2["default"].createElement(_TrendItem2["default"], { key: t._id, item: t });
+				this.state.trends.map(function (t, idx) {
+					return _react2["default"].createElement(_TrendItem2["default"], { key: t.id, item: t, idx: idx });
 				})
 			);
 		}
@@ -559,7 +559,7 @@ var TrendsStore = (function () {
 	}, {
 		key: "getHistorySuccess",
 		value: function getHistorySuccess(result) {
-			this.history[result.data._id] = result.data.values;
+			this.history[result.data.id] = result.data.values;
 		}
 
 		// GET HISTORY FAIL

@@ -20,7 +20,7 @@ class TrendsStore {
 
 	// GET HISTORY SUCCESS
 	getHistorySuccess(result) {
-		this.history[result.data._id] = result.data.values;
+		this.history[result.data.id] = result.data.values;
 	}
 
 	// GET HISTORY FAIL

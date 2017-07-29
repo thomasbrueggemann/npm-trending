@@ -1,64 +1,62 @@
 {
-  "name": "npm-trending",
-  "version": "1.0.0",
-  "description": "Capture trends in the NPM registry",
-  "main": "index.js",
-  "scripts": {
-    "start": "babel-node server.js",
-    "watch": "nodemon --exec babel-node -- server.js",
-    "postinstall": "bower install && gulp build",
-    "test": "python test/continous.py"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/thomasbrueggemann/npm-trending.git"
-  },
-  "keywords": [
-    "npm",
-    "trending"
-  ],
-  "author": "Thomas Brüggemann",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/thomasbrueggemann/npm-trending/issues"
-  },
-  "homepage": "https://github.com/thomasbrueggemann/npm-trending#readme",
-  "dependencies": {
-    "alt": "^0.17.4",
-    "apicache": "^0.8.6",
-    "async": "^2.3.0",
-    "axios": "^0.16.1",
-    "babel": "^5.8.23",
-    "body-parser": "^1.14.1",
-    "colors": "^1.1.2",
-    "compression": "^1.6.0",
-    "express": "^4.15.2",
-    "history": "^1.12.5",
-    "moment": "^2.17.1",
-    "mongodb": "^2.2.26",
-    "npm-download-count": "^1.0.2",
-    "react": "^0.14.0",
-    "react-dom": "^0.14.0",
-    "react-router": "^1.0.0-rc3",
-    "react-trend": "^1.2.3",
-    "swig": "^1.4.2",
-    "underscore": "^1.8.3"
-  },
-  "devDependencies": {
-    "babelify": "^6.3.0",
-    "bower": "^1.6.3",
-    "browserify": "^11.2.0",
-    "gulp": "^3.9.0",
-    "gulp-autoprefixer": "^3.1.0",
-    "gulp-concat": "^2.6.0",
-    "gulp-cssmin": "^0.1.7",
-    "gulp-if": "^2.0.0",
-    "gulp-less": "^3.0.3",
-    "gulp-plumber": "^1.0.1",
-    "gulp-streamify": "1.0.2",
-    "gulp-uglify": "^1.4.2",
-    "gulp-util": "^3.0.6",
-    "vinyl-source-stream": "^1.1.0",
-    "watchify": "^3.4.0"
-  }
+	"name": "npm-trending",
+	"version": "1.0.1",
+	"description": "Capture trends in the NPM registry",
+	"main": "index.js",
+	"scripts": {
+		"start": "babel-node server.js",
+		"watch": "nodemon --exec babel-node -- server.js",
+		"postinstall": "bower install && gulp build",
+		"test": "python test/continous.py"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/thomasbrueggemann/npm-trending.git"
+	},
+	"keywords": ["npm", "trending"],
+	"author": "Thomas Brüggemann",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/thomasbrueggemann/npm-trending/issues"
+	},
+	"homepage": "https://github.com/thomasbrueggemann/npm-trending#readme",
+	"dependencies": {
+		"alt": "^0.17.4",
+		"apicache": "^0.8.6",
+		"async": "^2.3.0",
+		"axios": "^0.16.1",
+		"babel": "^5.8.23",
+		"body-parser": "^1.14.1",
+		"colors": "^1.1.2",
+		"compression": "^1.6.0",
+		"express": "^4.15.2",
+		"history": "^1.12.5",
+		"moment": "^2.17.1",
+		"mongodb": "^2.2.26",
+		"mysql": "^2.14.0",
+		"npm-download-count": "^1.0.2",
+		"react": "^0.14.0",
+		"react-dom": "^0.14.0",
+		"react-router": "^1.0.0-rc3",
+		"react-trend": "^1.2.3",
+		"swig": "^1.4.2",
+		"underscore": "^1.8.3"
+	},
+	"devDependencies": {
+		"babelify": "^6.3.0",
+		"bower": "^1.6.3",
+		"browserify": "^11.2.0",
+		"gulp": "^3.9.0",
+		"gulp-autoprefixer": "^3.1.0",
+		"gulp-concat": "^2.6.0",
+		"gulp-cssmin": "^0.1.7",
+		"gulp-if": "^2.0.0",
+		"gulp-less": "^3.0.3",
+		"gulp-plumber": "^1.0.1",
+		"gulp-streamify": "1.0.2",
+		"gulp-uglify": "^1.4.2",
+		"gulp-util": "^3.0.6",
+		"vinyl-source-stream": "^1.1.0",
+		"watchify": "^3.4.0"
+	}
 }
